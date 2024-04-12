@@ -6,6 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 import type { CreateUserDto } from './dto/create-user.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponse } from './models';
 
 @Injectable()
 export class UsersService {
@@ -34,8 +35,7 @@ export class UsersService {
   async findAll() {
     const users = await this.prisma.user.findMany();
     return users.map((user) => {
-      delete user.password;
-      return user;
+      return UserResponse.fromUserEntity(user);
     });
   }
 
@@ -46,9 +46,7 @@ export class UsersService {
       }
     });
 
-    delete user.password;
-
-    return user;
+    return UserResponse.fromUserEntity(user);
   }
 
   async findByEmail(email: string) {
@@ -62,9 +60,7 @@ export class UsersService {
       return null;
     }
 
-    delete user.password;
-
-    return user;
+    return UserResponse.fromUserEntity(user);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -78,9 +74,7 @@ export class UsersService {
       }
     });
 
-    delete user.password;
-
-    return user;
+    return UserResponse.fromUserEntity(user);
   }
 
   remove(id: number) {
