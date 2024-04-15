@@ -9,6 +9,8 @@ export class UserResponse {
 
   role: string;
 
+  hashedRefreshToken?: string;
+
   createdAt: Date;
 
   updatedAt: Date;
@@ -20,6 +22,7 @@ export class UserResponse {
     response.name = entity.name;
     response.email = entity.email;
     response.role = entity.role;
+    response.hashedRefreshToken = entity.hashedRefreshToken?.toString() || null;
     response.createdAt = entity.createdAt;
     response.updatedAt = entity.updatedAt;
 

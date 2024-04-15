@@ -1,14 +1,26 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 
-import { UsersModule } from './users/users.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { AccessTokenGuard } from './common/guards';
+import { PrismaModule } from './prisma/prisma.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, AuthModule],
-  controllers: [AppController],
-  providers: [AppService]
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    UsersModule,
+    PrismaModule,
+    AuthModule
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard
+    }
+  ]
 })
 export class AppModule {}

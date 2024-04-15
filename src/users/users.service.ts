@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import type { Role } from '@prisma/client';
 import { hashSync } from 'bcrypt';
 
@@ -13,23 +13,23 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    try {
-      const isUserExists = await this.findByEmail(createUserDto.email);
+    const isUserExists = await this.findByEmail(createUserDto.email);
 
-      if (isUserExists) {
-        throw new ConflictException('Email address already exists');
-      }
-
-      return await this.prisma.user.create({
-        data: {
-          ...createUserDto,
-          password: hashSync(createUserDto.password, 10),
-          role: createUserDto.role as Role
-        }
-      });
-    } catch (error) {
-      throw error;
+    if (isUserExists) {
+      throw new ConflictException('Email address already exists');
     }
+
+    if (createUserDto.password !== createUserDto.confirmPassword) {
+      throw new UnprocessableEntityException('Passwords are not matching.');
+    }
+
+    return this.prisma.user.create({
+      data: {
+        ...createUserDto,
+        password: hashSync(createUserDto.password, 10),
+        role: createUserDto.role as Role
+      }
+    });
   }
 
   async findAll() {
