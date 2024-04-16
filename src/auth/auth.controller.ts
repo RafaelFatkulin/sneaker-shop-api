@@ -1,58 +1,77 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
-import { GetCurrentUser, GetCurrentUserId, Public } from 'src/common/decorators';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 
-import { RefreshTokenGuard } from '../common/guards';
-import type { UserResponse } from '../users/models';
+import { CreateUserDto } from '../user/dto';
 
+import { Auth } from './decorators/auth.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthService } from './auth.service';
-import { RefreshTokenDto, SignInDto, SignUpDto } from './dto';
-import type { Tokens } from './types';
+import { SignInDto } from './dto';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Public()
-  @Post('/signup')
-  @HttpCode(HttpStatus.CREATED)
-  signUp(@Body() signUpDto: SignUpDto): Promise<Tokens> {
-    return this.authService.signUp(signUpDto);
-  }
-
-  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('/signin')
-  @HttpCode(HttpStatus.OK)
-  async signIn(@Body() signInDto: SignInDto): Promise<Tokens> {
-    return this.authService.signIn(signInDto);
+  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) response: Response) {
+    const { refreshToken, ...data } = await this.authService.signIn(signInDto);
+    this.authService.addRefreshTokenToResponse(response, refreshToken);
+
+    return data;
   }
 
-  @ApiBearerAuth()
-  @Post('/logout')
-  @HttpCode(HttpStatus.OK)
-  logout(@GetCurrentUserId() userId: number): Promise<boolean> {
-    return this.authService.logout(userId);
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/signup')
+  async signUp(@Body() signUpDto: CreateUserDto, @Res({ passthrough: true }) response: Response) {
+    const { refreshToken, ...data } = await this.authService.signUp(signUpDto);
+    this.authService.addRefreshTokenToResponse(response, refreshToken);
+
+    return data;
   }
 
-  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @Auth()
   @Get('/user')
-  @HttpCode(HttpStatus.OK)
-  async getCurrentUser(@GetCurrentUserId() userId: number): Promise<UserResponse> {
-    return this.authService.getCurrentUser(userId);
+  async getUser(@CurrentUser('id') id: number) {
+    return this.authService.getUser(id);
   }
 
-  @ApiBearerAuth()
-  @Public()
-  // @UseGuards(RefreshTokenGuard)
-  @Post('/refresh')
   @HttpCode(HttpStatus.OK)
-  refreshTokens(
-    // @GetCurrentUserId() userId: number,
-    @Body() refreshTokenDto: RefreshTokenDto
-  ): Promise<Tokens> {
-    console.log(refreshTokenDto.refreshToken);
-    return this.authService.refreshTokens(refreshTokenDto.refreshToken);
+  @Post('/refresh-token')
+  async getNewTokens(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
+    const refreshTokenFromCookies = request.cookies[this.authService.REFRESH_TOKEN_NAME] as string;
+
+    if (!refreshTokenFromCookies) {
+      this.authService.removeRefreshTokenFromResponse(response);
+      throw new UnauthorizedException('Refresh token not passed');
+    }
+
+    const { refreshToken, ...data } =
+      await this.authService.createNewTokens(refreshTokenFromCookies);
+
+    this.authService.addRefreshTokenToResponse(response, refreshToken);
+
+    return data;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Delete('/logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    this.authService.removeRefreshTokenFromResponse(response);
+    return true;
   }
 }

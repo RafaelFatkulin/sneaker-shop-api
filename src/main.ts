@@ -7,17 +7,9 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    cors: {
-      origin: 'http://localhost:5174',
-      credentials: true
-    }
-  });
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
-
-  const configService = app.get(ConfigService);
-  app.use(cookieParser(configService.get<string>('COOKIE_SECRET')));
 
   const config = new DocumentBuilder()
     .setTitle('Sneaker Shop API')

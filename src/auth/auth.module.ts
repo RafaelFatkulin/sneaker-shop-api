@@ -1,16 +1,24 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { PrismaService } from '../prisma/prisma.service';
-import { UsersService } from '../users/users.service';
+import { getJwtConfig } from '../common/config/jwt.config';
+import { UserModule } from '../user/user.module';
 
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies';
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [
+    UserModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getJwtConfig
+    })
+  ],
   controllers: [AuthController],
-  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy, PrismaService, UsersService]
+  providers: [AuthService, JwtStrategy]
 })
 export class AuthModule {}
