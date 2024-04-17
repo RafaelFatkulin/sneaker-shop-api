@@ -81,7 +81,7 @@ export class AuthService {
     const data = { id: userId };
 
     const accessToken = this.jwtService.sign(data, {
-      expiresIn: '10m'
+      expiresIn: '10s'
     });
 
     const refreshToken = this.jwtService.sign(data, {
@@ -114,18 +114,18 @@ export class AuthService {
 
     response.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
       httpOnly: true,
+      domain: 'localhost',
       expires: expiresIn,
-      secure: false,
-      sameSite: 'none'
+      secure: false
     });
   }
 
   removeRefreshTokenFromResponse(response: Response) {
-    response.clearCookie(this.REFRESH_TOKEN_NAME, {
+    response.cookie(this.REFRESH_TOKEN_NAME, '', {
       httpOnly: true,
+      domain: 'localhost',
       expires: new Date(0),
-      secure: false,
-      sameSite: 'none'
+      secure: false
     });
   }
 }
