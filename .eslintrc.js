@@ -77,6 +77,7 @@ module.exports = {
         }
       },
       rules: {
+        'class-methods-use-this': 'off',
         'import/order': 'off',
         'import/extensions': 'off',
         'import/prefer-default-export': 'off',

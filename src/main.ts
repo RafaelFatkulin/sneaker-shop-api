@@ -1,33 +1,39 @@
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.useGlobalPipes(new ValidationPipe());
-  app.use(cookieParser());
-  app.enableCors({
-    origin: ['http://localhost:3000'],
-    credentials: true,
-    exposedHeaders: 'set-cookie'
+  const app = await NestFactory.create(AppModule, {
+    cors: { origin: '*' }
   });
 
-  const config = new DocumentBuilder()
-    .setTitle('Sneaker Shop API')
-    .setDescription('The sneaker shop API description')
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true }
+    })
+  );
+
+  const apiConfig = new DocumentBuilder()
+    .setTitle('🔥🔥🔥 Sneaker Shop API 🔥🔥🔥')
+    .setDescription('API для магазина кроссовок')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT'
+    })
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, apiConfig);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(8888);
+  await app.listen(8000);
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();
