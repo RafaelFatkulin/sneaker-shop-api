@@ -95,7 +95,7 @@ model ProductOptions {
   discount     Decimal?
   discountType DiscountType?
 
-  count Int @default(0)
+  count Int? @default(0)
 
   @@map("product_options")
 }

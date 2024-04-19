@@ -186,7 +186,6 @@ export class UsersController {
     // @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto
   ) {
-    console.log('gg', currentUser);
     const isUserExists = await this.usersService.getById(currentUser.id);
 
     if (!isUserExists) {
