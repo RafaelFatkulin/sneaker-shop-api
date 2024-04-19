@@ -33,7 +33,12 @@ export class AuthService {
     return this.authenticate(user);
   }
 
-  decode(token: string) {
+  decode(token: string): {
+    id: number;
+    name: string;
+    email: string;
+    role: Role;
+  } {
     return this.jwtService.decode(token);
   }
 

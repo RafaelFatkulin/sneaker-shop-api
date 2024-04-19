@@ -17,4 +17,25 @@ export class PasswordService {
   async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
   }
+
+  generatePassword(length: number, includeSymbols: boolean = true): string {
+    const characters = [
+      'abcdefghijklmnopqrstuvwxyz',
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      '0123456789',
+      '!@#$%^&*()_-+={}[]|;:./<>,.?'
+    ];
+
+    if (!includeSymbols) {
+      characters.pop();
+    }
+
+    let password = '';
+    for (let i = 0; i < length; i++) {
+      const characterSet = characters[Math.floor(Math.random() * characters.length)];
+      password += characterSet[Math.floor(Math.random() * characterSet.length)];
+    }
+
+    return password;
+  }
 }

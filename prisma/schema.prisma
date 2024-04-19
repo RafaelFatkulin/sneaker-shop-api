@@ -30,3 +30,72 @@ model User {
 
   @@map("users")
 }
+
+model Product {
+  id      Int    @id @default(autoincrement())
+  title   String
+  brand   Brand  @relation(fields: [brandId], references: [id])
+  brandId Int
+
+  ProductOptions ProductOptions[]
+
+  @@map("products")
+}
+
+model Brand {
+  id          Int    @id @default(autoincrement())
+  title       String @unique
+  logo        String
+  description String
+
+  products Product[]
+
+  @@map("brands")
+}
+
+model Size {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  ProductOptions ProductOptions[]
+
+  @@map("sizes")
+}
+
+model Color {
+  id    Int    @id @default(autoincrement())
+  title String @unique
+  code  String
+
+  ProductOptions ProductOptions[]
+
+  @@map("colors")
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+model ProductOptions {
+  id Int @id @default(autoincrement())
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+
+  size   Size @relation(fields: [sizeId], references: [id])
+  sizeId Int
+
+  color   Color @relation(fields: [colorId], references: [id])
+  colorId Int
+
+  images Json?
+
+  price        Decimal
+  discount     Decimal?
+  discountType DiscountType?
+
+  count Int @default(0)
+
+  @@map("product_options")
+}

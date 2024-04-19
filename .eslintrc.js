@@ -77,6 +77,7 @@ module.exports = {
         }
       },
       rules: {
+        'no-plusplus': ["error", { "allowForLoopAfterthoughts": true }],
         'class-methods-use-this': 'off',
         'import/order': 'off',
         'import/extensions': 'off',
