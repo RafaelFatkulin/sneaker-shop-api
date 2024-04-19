@@ -55,7 +55,7 @@ model Brand {
 
 model Size {
   id    Int    @id @default(autoincrement())
-  title String
+  title String @unique
 
   ProductOptions ProductOptions[]
 

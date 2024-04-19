@@ -56,7 +56,7 @@ export class BrandsService {
     });
   }
 
-  async checkTitleToUnique(title: string, id?: number) {
+  private async checkTitleToUnique(title: string, id?: number) {
     const isAlreadyExists = await this.getByTitle(title);
     if (isAlreadyExists && isAlreadyExists.id !== id) {
       throw new BadRequestException(`Brand "${title}" already exists`);

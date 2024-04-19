@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -10,6 +9,7 @@ import {
   Post,
   UseGuards
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '../../utils/decorators';
 import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
@@ -17,6 +17,7 @@ import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { BrandsService } from './brands.service';
 
+@ApiTags('Brands')
 @Controller('brands')
 export class BrandsController {
   constructor(private readonly brandsService: BrandsService) {}
@@ -28,11 +29,7 @@ export class BrandsController {
 
   @Get(':id')
   async getById(@Param('id') id: number) {
-    const isExists = await this.brandsService.getById(id);
-
-    if (!isExists) {
-      throw new NotFoundException(`Brand with id ${id} not found`);
-    }
+    await this.checkIsExists(id);
 
     return this.brandsService.getById(id);
   }
@@ -54,11 +51,7 @@ export class BrandsController {
   @UseGuards(RoleGuard)
   @Patch('/:id')
   async update(@Param('id') id: number, @Body() data: CreateBrandDto) {
-    const isExists = await this.brandsService.getById(id);
-
-    if (!isExists) {
-      throw new NotFoundException(`Brand with id ${id} not found`);
-    }
+    await this.checkIsExists(id);
 
     const brand = await this.brandsService.update(id, data);
 
@@ -72,10 +65,20 @@ export class BrandsController {
   @UseGuards(RoleGuard)
   @Delete(':id')
   async delete(@Param('id') id: number) {
+    await this.checkIsExists(id);
+
     const brand = await this.brandsService.delete(id);
 
     return {
       message: `Brand "${brand.title}" deleted successfully`
     };
+  }
+
+  private async checkIsExists(id: number): Promise<void> {
+    const isExists = await this.brandsService.getById(id);
+
+    if (!isExists) {
+      throw new NotFoundException(`Brand with id ${id} not found`);
+    }
   }
 }
