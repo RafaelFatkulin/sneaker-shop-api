@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
-import { ColorsService } from './colors.service';
+import { JwtService } from '@nestjs/jwt';
+
+import { AuthService, PrismaService } from '../../utils/services';
+import { PasswordService } from '../../utils/services/auth/common/password';
+
 import { ColorsController } from './colors.controller';
+import { ColorsService } from './colors.service';
 
 @Module({
   controllers: [ColorsController],
-  providers: [ColorsService],
+  providers: [ColorsService, PrismaService, AuthService, JwtService, PasswordService]
 })
 export class ColorsModule {}

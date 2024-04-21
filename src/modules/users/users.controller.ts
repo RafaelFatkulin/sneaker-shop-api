@@ -29,7 +29,7 @@ import { LoginResponse, RegisterResponse, SessionResponse } from './responses';
 import { UserWithoutPassword } from './types';
 import { UsersService } from './users.service';
 
-@ApiTags('💂‍♂️ users')
+@ApiTags('💂‍♂️ Users')
 @Controller('users')
 // @UseInterceptors(CurrentUserInterceptor)
 export class UsersController {
