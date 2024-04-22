@@ -7,12 +7,16 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '../../utils/decorators';
 import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
+import { SharpPipe } from '../../utils/pipes/sharp.pipe';
 
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { BrandsService } from './brands.service';
@@ -38,8 +42,12 @@ export class BrandsController {
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
   @Post('')
-  async create(@Body() data: CreateBrandDto) {
-    const brand = await this.brandsService.create(data);
+  @UseInterceptors(FileInterceptor('logo'))
+  async create(
+    @Body() data: CreateBrandDto,
+    @UploadedFile(new SharpPipe(data.title, 'brands'))
+  ) {
+    const brand = await this.brandsService.create(data, logo);
 
     return {
       message: `Brand "${brand.title}" created successfully`

@@ -29,11 +29,14 @@ export class BrandsService {
     });
   }
 
-  async create(data: CreateBrandDto) {
+  async create(data: CreateBrandDto, logo: string) {
     await this.checkTitleToUnique(data.title);
 
     return this.prisma.brand.create({
-      data
+      data: {
+        ...data,
+        logo
+      }
     });
   }
 

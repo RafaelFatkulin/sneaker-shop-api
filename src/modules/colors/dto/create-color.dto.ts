@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsHexColor, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateColorDto {
   @IsString()
@@ -7,5 +7,6 @@ export class CreateColorDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsHexColor()
   code: string;
 }
