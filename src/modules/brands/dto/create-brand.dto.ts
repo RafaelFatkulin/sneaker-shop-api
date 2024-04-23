@@ -8,10 +8,6 @@ export class CreateBrandDto {
   title: string;
 
   @IsString()
-  @IsOptional()
-  logo: string;
-
-  @IsString()
   @IsNotEmpty()
   description: string;
 }

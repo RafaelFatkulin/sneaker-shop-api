@@ -83,6 +83,7 @@ export class ProductsService {
 
   private async checkProductToUnique(title: string, id?: number) {
     const isExist = await this.findOneBiTitle(title);
+
     if (isExist && isExist.id !== id)
       throw new BadRequestException(`Product ${isExist.title} is already exists`);
   }

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../utils/services';
+import { SharpService } from '../../utils/services/sharp/sharp.service';
 
 import type { CreateBrandDto } from './dto/create-brand.dto';
 import type { UpdateBrandDto } from './dto/update-brand.dto';
@@ -29,25 +30,28 @@ export class BrandsService {
     });
   }
 
-  async create(data: CreateBrandDto, logo: string) {
+  async create(data: CreateBrandDto, logoPath: string) {
     await this.checkTitleToUnique(data.title);
 
     return this.prisma.brand.create({
       data: {
         ...data,
-        logo
+        logo: logoPath
       }
     });
   }
 
-  async update(id: number, data: UpdateBrandDto) {
+  async update(id: number, data: UpdateBrandDto, logoPath: string | null) {
     await this.checkTitleToUnique(data.title, id);
 
     return this.prisma.brand.update({
       where: {
         id
       },
-      data
+      data: {
+        ...data,
+        logo: logoPath
+      }
     });
   }
 
