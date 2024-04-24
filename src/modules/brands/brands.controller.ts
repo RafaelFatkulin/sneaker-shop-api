@@ -82,13 +82,6 @@ export class BrandsController {
         oldImage: brandToUpdate.logo || null,
         image: logo
       });
-    } else {
-      imagePath = await this.sharpService.updateImage({
-        type: 'brand',
-        title: data.title,
-        oldTitle: brandToUpdate.title,
-        oldImage: brandToUpdate.logo || null
-      });
     }
 
     const brand = await this.brandsService.update(id, data, imagePath || brandToUpdate.logo);

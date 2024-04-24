@@ -34,13 +34,11 @@ export class SharpService {
   async updateImage({
     type,
     title,
-    oldTitle,
     oldImage,
     image
   }: {
     type: string;
     title: string;
-    oldTitle?: string;
     oldImage?: string;
     image?: Express.Multer.File;
   }): Promise<string> {
@@ -50,22 +48,11 @@ export class SharpService {
 
       await this.createDirectory(fileFolder);
 
-      if (oldImage && title === oldTitle && image) {
+      if (oldImage) {
         await this.deleteImage(oldImage);
-
-        await this.convertImage(image, filePath);
-      }
-      if (oldImage && title !== oldTitle) {
-        console.log({
-          oldImage,
-          filePath
-        });
-        await this.renameImage(oldImage, filePath);
       }
 
-      console.log({
-        filePath
-      });
+      await this.convertImage(image, filePath);
 
       return filePath;
     } catch (error) {
@@ -81,16 +68,6 @@ export class SharpService {
       });
     } catch (error) {
       Logger.error('Error deleting image:', error);
-    }
-  }
-
-  private async renameImage(oldFilePath: string, newFilePath: string): Promise<void> {
-    try {
-      await fs.promises.access(oldFilePath).then(async () => {
-        return fs.promises.rename(oldFilePath, newFilePath);
-      });
-    } catch (error) {
-      Logger.error('Error renaming image:', error);
     }
   }
 
