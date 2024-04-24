@@ -6,9 +6,13 @@ import {
   NotFoundException,
   Param,
   Patch,
-  Post
+  Post,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+import { Roles } from '../../utils/decorators';
+import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
 
 import { CreateColorDto } from './dto/create-color.dto';
 import { UpdateColorDto } from './dto/update-color.dto';
@@ -19,6 +23,10 @@ import { ColorsService } from './colors.service';
 export class ColorsController {
   constructor(private readonly colorsService: ColorsService) {}
 
+  @ApiAuthorizedOnly()
+  @Roles('ADMIN')
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Body() createColorDto: CreateColorDto) {
     const color = await this.colorsService.create(createColorDto);
@@ -39,6 +47,10 @@ export class ColorsController {
     return this.colorsService.findById(id);
   }
 
+  @ApiAuthorizedOnly()
+  @Roles('ADMIN')
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateColorDto: UpdateColorDto) {
     await this.checkIsExists(id);
@@ -50,6 +62,10 @@ export class ColorsController {
     };
   }
 
+  @ApiAuthorizedOnly()
+  @Roles('ADMIN')
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: number) {
     await this.checkIsExists(id);

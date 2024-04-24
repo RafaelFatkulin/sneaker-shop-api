@@ -12,7 +12,7 @@ import {
   UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '../../utils/decorators';
 import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
@@ -45,6 +45,7 @@ export class BrandsController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Post('')
   @UseInterceptors(FileInterceptor('logo'))
   async create(@Body() data: CreateBrandDto, @UploadedFile() logo: Express.Multer.File) {
@@ -64,6 +65,7 @@ export class BrandsController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   @UseInterceptors(FileInterceptor('logo'))
   async update(
@@ -94,6 +96,7 @@ export class BrandsController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async delete(@Param('id') id: number) {
     const brandToDelete = await this.checkIsExists(id);

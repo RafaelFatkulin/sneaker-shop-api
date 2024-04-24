@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '../../utils/decorators';
 import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
@@ -27,6 +27,7 @@ export class ProductsController {
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
   @Post()
+  @ApiBearerAuth()
   async create(@Body() createProductDto: CreateProductDto) {
     const product = await this.productsService.create(createProductDto);
 
@@ -51,6 +52,7 @@ export class ProductsController {
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
   @Patch(':id')
+  @ApiBearerAuth()
   async update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
     await this.checkIsExists(id);
 
@@ -65,6 +67,7 @@ export class ProductsController {
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
   @Delete(':id')
+  @ApiBearerAuth()
   async remove(@Param('id') id: number) {
     await this.checkIsExists(id);
 

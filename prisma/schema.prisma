@@ -39,6 +39,9 @@ model Product {
 
   ProductOptions ProductOptions[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("products")
 }
 
@@ -50,6 +53,9 @@ model Brand {
 
   products Product[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("brands")
 }
 
@@ -58,6 +64,9 @@ model Size {
   title String @unique
 
   ProductOptions ProductOptions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("sizes")
 }
@@ -68,6 +77,9 @@ model Color {
   code  String
 
   ProductOptions ProductOptions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("colors")
 }
@@ -96,6 +108,9 @@ model ProductOptions {
   discountType DiscountType?
 
   count Int? @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("product_options")
 }

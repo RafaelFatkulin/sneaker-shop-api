@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { Roles } from '../../utils/decorators';
 import { ApiAuthorizedOnly, RoleGuard } from '../../utils/guards';
@@ -26,6 +26,7 @@ export class SizesController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Post()
   async create(@Body() createSizeDto: CreateSizeDto) {
     const size = await this.sizesService.create(createSizeDto);
@@ -50,6 +51,7 @@ export class SizesController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: number, @Body() updateSizeDto: UpdateSizeDto) {
     await this.checkIsExists(id);
@@ -64,6 +66,7 @@ export class SizesController {
   @ApiAuthorizedOnly()
   @Roles('ADMIN')
   @UseGuards(RoleGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: number) {
     await this.checkIsExists(id);
