@@ -4,6 +4,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage, memoryStorage } from 'multer';
 
 import { BrandsModule } from './modules/brands/brands.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 import { ColorsModule } from './modules/colors/colors.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SizesModule } from './modules/sizes/sizes.module';
@@ -22,6 +23,7 @@ import { UsersModule } from './modules/users/users.module';
     BrandsModule,
     ColorsModule,
     SizesModule,
+    CategoriesModule,
     ProductsModule
   ]
 })

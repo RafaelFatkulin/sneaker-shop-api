@@ -8,4 +8,8 @@ export class CreateProductDto {
   @IsNumber()
   @IsNotEmpty()
   brandId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  categoryId: number;
 }
