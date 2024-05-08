@@ -24,7 +24,7 @@ export class SharpService {
 
       await this.convertImage(image, filePath);
 
-      return filePath;
+      return `http://localhost:8000/${filePath}`;
     } catch (error) {
       Logger.error('Error during image processing:', error);
       throw new Error('Failed to process image');
